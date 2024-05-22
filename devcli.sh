@@ -57,7 +57,7 @@ stop() {
 # Function to insert data into the database
 insert_db() {
     echo "Insertion de données dans la base de données..."
-    if python3 ./DataSets/Fichiers_FIN/insert.py; then
+    if sudo -E /home/mathieu/InfoCompanies/InfoCompanies-Data-Model/db.sh; then
         echo -e "${GREEN}Data inserted successfully.${NC}"
     else
         echo -e "${RED}Failed to insert data.${NC}"
@@ -180,12 +180,7 @@ case "$1" in
         fi
         ;;
     *)
-        echo -e "${YELLOW}Usage: ./script.sh {remove_volumes} {dev|prod}${NC}"
-        exit 1
-        ;;
-    *)
         echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|create_keycloak_user|install} {dev|prod}${NC}"
         exit 1
         ;;
 esac
-
