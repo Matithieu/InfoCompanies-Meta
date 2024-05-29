@@ -57,7 +57,7 @@ stop() {
 # Function to insert data into the database
 insert_db() {
     echo "Insertion de données dans la base de données..."
-    if sudo -E /home/mathieu/InfoCompanies/InfoCompanies-Data-Model/db.sh; then
+    if sudo -E sh ./InfoCompanies-Data-Model/db.sh; then
         echo -e "${GREEN}Data inserted successfully.${NC}"
     else
         echo -e "${RED}Failed to insert data.${NC}"
