@@ -1,3 +1,4 @@
+#!/bin/bash
 #!/bin/zsh
 
 # Color codes for styling
@@ -22,14 +23,7 @@ start() {
     fi
 
     echo "Starting docker containers..."
-    if [ "$1" = "dev" ]; then
-        if docker-compose -f "docker-compose-$1.yml" up --build; then
-            echo -e "${GREEN}Containers are up!${NC}"
-        else
-            echo -e "${RED}Failed to start docker containers.${NC}"
-            exit 1
-        fi
-    elif [ "$1" = "prod" ]; then
+    if [ "$1" = "dev" ] || [ "$1" = "prod" ]; then
         if docker-compose -f "docker-compose-$1.yml" up --build; then
             echo -e "${GREEN}Containers are up!${NC}"
         else
@@ -94,13 +88,19 @@ install() {
 
     REPO1_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO1}"
     REPO2_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO2}"
+    REPO3_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO3}"
+    REPO4_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO4}"
 
     # Validate repositories
     validate_repo "$REPO1_URL" || exit 1
     validate_repo "$REPO2_URL" || exit 1
+    validate_repo "$REPO3_URL" || exit 1
+    validate_repo "$REPO4_URL" || exit 1
 
     REPO1_DIR="InfoCompanies-API"
-    REPO2_DIR="infoCompanies"
+    REPO2_DIR="InfoCompanies-Front"
+    REPO3_DIR="InfoCompanies-Scraping-API"
+    REPO4_DIR="InfoCompanies-Data-Model"
 
     # Clone or update repository 1
     if [ ! -d "$REPO1_DIR" ]; then
@@ -144,7 +144,64 @@ install() {
         cd ..
     fi
 
+    # Clone or update repository 3
+    if [ ! -d "$REPO3_DIR" ]; then
+        echo "Cloning $REPO3_URL into $REPO3_DIR"
+        if git clone "$REPO3_URL" "$REPO3_DIR"; then
+            echo -e "${GREEN}Cloned $REPO3_URL successfully.${NC}"
+        else
+            echo -e "${RED}Failed to clone $REPO3_URL${NC}"
+            exit 1
+        fi
+    else
+        echo "Updating $REPO3_DIR"
+        cd "$REPO3_DIR" || { echo -e "${RED}Failed to enter $REPO3_DIR directory.${NC}"; exit 1; }
+        if git pull; then
+            echo -e "${GREEN}Updated $REPO3_DIR successfully.${NC}"
+        else
+            echo -e "${RED}Failed to update $REPO3_DIR${NC}"
+            exit 1
+        fi
+        cd ..
+    fi
+
+    # Clone or update repository 4
+    if [ ! -d "$REPO4_DIR" ]; then
+        echo "Cloning $REPO4_URL into $REPO4_DIR"
+        if git clone "$REPO4_URL" "$REPO4_DIR"; then
+            echo -e "${GREEN}Cloned $REPO4_URL successfully.${NC}"
+        else
+            echo -e "${RED}Failed to clone $REPO4_URL${NC}"
+            exit 1
+        fi
+    else
+        echo "Updating $REPO4_DIR"
+        cd "$REPO4_DIR" || { echo -e "${RED}Failed to enter $REPO4_DIR directory.${NC}"; exit 1; }
+        if git pull; then
+            echo -e "${GREEN}Updated $REPO4_DIR successfully.${NC}"
+        else
+            echo -e "${RED}Failed to update $REPO4_DIR${NC}"
+            exit 1
+        fi
+        cd ..
+    fi
+
     echo -e "${GREEN}Repositories are up-to-date!${NC}"
+}
+
+# Function to create .env files from .template.env files
+create_env() {
+    for dir in InfoCompanies-API InfoCompanies-Scraping-API; do
+        TEMPLATE_FILE="$dir/template.env"
+        ENV_FILE="$dir/.env"
+        if [ -f "$TEMPLATE_FILE" ]; then
+            cp "$TEMPLATE_FILE" "$ENV_FILE"
+            echo -e "${GREEN}Created .env file in $dir from $TEMPLATE_FILE.${NC}"
+        else
+            echo -e "${RED}$TEMPLATE_FILE not found in $dir.${NC}"
+            exit 1
+        fi
+    done
 }
 
 # Check the arguments passed to the script
@@ -179,8 +236,11 @@ case "$1" in
             exit 1
         fi
         ;;
+    create_env)
+        create_env
+        ;;
     *)
-        echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|create_keycloak_user|install} {dev|prod}${NC}"
+        echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env} {dev|prod}${NC}"
         exit 1
         ;;
 esac
