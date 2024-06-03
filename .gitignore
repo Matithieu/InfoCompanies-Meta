@@ -4,3 +4,4 @@ InfoCompanies-API
 InfoCompanies-Scraping-API
 .env
 .idea
+node_modules/
