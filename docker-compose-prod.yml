@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   postgres:
     image: postgres
@@ -28,11 +28,11 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
       KC_HTTP_PORT: 8180
-      KC_HEALTH_ENABLED: 'true'
+      KC_HEALTH_ENABLED: "true"
     ports:
       - "8180:8180"
     volumes:
-      - ./:/opt/keycloak/data/import
+      - ./keycloak:/opt/keycloak/data/import
     command: ["start-dev", "--import-realm", "--health-enabled=true"]
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/localhost/8180'
@@ -81,14 +81,15 @@ services:
       OAUTH2_PROXY_OIDC_ISSUER_URL: "http://keycloak:8180/realms/infoCompanies"
       OAUTH2_PROXY_EMAIL_DOMAINS: "*"
       OAUTH2_PROXY_COOKIE_SECRET: "iCg-xr79FO66_EiOhZF3pOsEGnNfARiH50MX0AWaBU8="
-      OAUTH2_PROXY_UPSTREAMS: "http://backend:8080/"
-      OAUTH2_PROXY_HTTP_ADDRESS: "0.0.0.0:4180"
-      OAUTH2_PROXY_COOKIE_SECURE: "false"
       OAUTH2_PROXY_REVERSE_PROXY: "true"
-      OAUTH2_PROXY_SESSION_STORE_TYPE: "redis"
-      OAUTH2_PROXY_REDIS_CONNECTION_URL: "redis://redis:6379"
+      OAUTH2_PROXY_COOKIE_SECURE: "false"
       OAUTH2_PROXY_COOKIE_REFRESH: "59m"
       OAUTH2_PROXY_COOKIE_EXPIRE: "168h"
+      OAUTH2_PROXY_COOKIE_DOMAIN: "localhost"
+      OAUTH2_PROXY_UPSTREAMS: "http://backend:8080/"
+      OAUTH2_PROXY_HTTP_ADDRESS: "0.0.0.0:4180"
+      OAUTH2_PROXY_SESSION_STORE_TYPE: "redis"
+      OAUTH2_PROXY_REDIS_CONNECTION_URL: "redis://redis:6379"
       OAUTH2_PROXY_PASS_AUTHORIZATION_HEADER: "true"
       OAUTH2_PROXY_CODE_CHALLENGE_METHOD: "S256"
       OAUTH2_PROXY_LOG_LEVEL: debug
@@ -109,4 +110,3 @@ services:
 volumes:
   postgres_data:
   pgadmin_data:
-
