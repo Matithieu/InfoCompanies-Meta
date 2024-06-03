@@ -101,6 +101,7 @@ services:
       - --insecure-oidc-allow-unverified-email=true
       - --prefer-email-to-user=true
       - --set-xauthrequest=true
+      - --skip-provider-button=true
     depends_on:
       keycloak:
         condition: service_healthy
