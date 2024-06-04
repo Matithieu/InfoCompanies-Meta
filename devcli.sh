@@ -9,7 +9,7 @@ NC='\033[0m' # No Color
 
 # Load environment variables from .env file
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    export "$(grep -v '^#' .env | xargs)"
 else
     echo -e "${RED}.env file not found. Please create one with the required variables.${NC}"
     exit 1
@@ -50,8 +50,13 @@ stop() {
 
 # Function to insert data into the database
 insert_db() {
+    CSV_FILE="final.csv"
+    if [ "$1" = "template" ]; then
+        CSV_FILE="template.csv"
+    fi
+
     echo "Insertion de données dans la base de données..."
-    if sudo -E sh ./InfoCompanies-Data-Model/db.sh; then
+    if sudo -E sh ./InfoCompanies-Data-Model/db.sh "$CSV_FILE"; then
         echo -e "${GREEN}Data inserted successfully.${NC}"
     else
         echo -e "${RED}Failed to insert data.${NC}"
@@ -223,7 +228,11 @@ case "$1" in
         fi
         ;;
     insert_db)
-        insert_db
+        if [ "$2" = "template" ]; then
+            insert_db "template"
+        else
+            insert_db
+        fi
         ;;
     install)
         install
