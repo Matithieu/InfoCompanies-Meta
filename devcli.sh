@@ -87,6 +87,35 @@ remove_volumes() {
     fi
 }
 
+# Function to clone or update a repository
+clone_or_update_repo() {
+    REPO_URL="$1"
+    REPO_DIR="$2"
+
+    if [ ! -d "$REPO_DIR" ]; then
+        echo "Cloning $REPO_URL into $REPO_DIR"
+        if git clone "$REPO_URL" "$REPO_DIR"; then
+            echo -e "${GREEN}Cloned $REPO_URL successfully.${NC}"
+        else
+            echo -e "${RED}Failed to clone $REPO_URL${NC}"
+            exit 1
+        fi
+    else
+        echo "Updating $REPO_DIR"
+        cd "$REPO_DIR" || {
+            echo -e "${RED}Failed to enter $REPO_DIR directory.${NC}"
+            exit 1
+        }
+        if git pull; then
+            echo -e "${GREEN}Updated $REPO_DIR successfully.${NC}"
+        else
+            echo -e "${RED}Failed to update $REPO_DIR${NC}"
+            exit 1
+        fi
+        cd ..
+    fi
+}
+
 # Function to install repositories from GitHub
 install() {
     echo "Fetching repositories from GitHub..."
@@ -102,94 +131,10 @@ install() {
     validate_repo "$REPO3_URL" || exit 1
     validate_repo "$REPO4_URL" || exit 1
 
-    REPO1_DIR="InfoCompanies-API"
-    REPO2_DIR="InfoCompanies-Front"
-    REPO3_DIR="InfoCompanies-Scraping-API"
-    REPO4_DIR="InfoCompanies-Data-Model"
-
-    # Clone or update repository 1
-    if [ ! -d "$REPO1_DIR" ]; then
-        echo "Cloning $REPO1_URL into $REPO1_DIR"
-        if git clone "$REPO1_URL" "$REPO1_DIR"; then
-            echo -e "${GREEN}Cloned $REPO1_URL successfully.${NC}"
-        else
-            echo -e "${RED}Failed to clone $REPO1_URL${NC}"
-            exit 1
-        fi
-    else
-        echo "Updating $REPO1_DIR"
-        cd "$REPO1_DIR" || { echo -e "${RED}Failed to enter $REPO1_DIR directory.${NC}"; exit 1; }
-        if git pull; then
-            echo -e "${GREEN}Updated $REPO1_DIR successfully.${NC}"
-        else
-            echo -e "${RED}Failed to update $REPO1_DIR${NC}"
-            exit 1
-        fi
-        cd ..
-    fi
-
-    # Clone or update repository 2
-    if [ ! -d "$REPO2_DIR" ]; then
-        echo "Cloning $REPO2_URL into $REPO2_DIR"
-        if git clone "$REPO2_URL" "$REPO2_DIR"; then
-            echo -e "${GREEN}Cloned $REPO2_URL successfully.${NC}"
-        else
-            echo -e "${RED}Failed to clone $REPO2_URL${NC}"
-            exit 1
-        fi
-    else
-        echo "Updating $REPO2_DIR"
-        cd "$REPO2_DIR" || { echo -e "${RED}Failed to enter $REPO2_DIR directory.${NC}"; exit 1; }
-        if git pull; then
-            echo -e "${GREEN}Updated $REPO2_DIR successfully.${NC}"
-        else
-            echo -e "${RED}Failed to update $REPO2_DIR${NC}"
-            exit 1
-        fi
-        cd ..
-    fi
-
-    # Clone or update repository 3
-    if [ ! -d "$REPO3_DIR" ]; then
-        echo "Cloning $REPO3_URL into $REPO3_DIR"
-        if git clone "$REPO3_URL" "$REPO3_DIR"; then
-            echo -e "${GREEN}Cloned $REPO3_URL successfully.${NC}"
-        else
-            echo -e "${RED}Failed to clone $REPO3_URL${NC}"
-            exit 1
-        fi
-    else
-        echo "Updating $REPO3_DIR"
-        cd "$REPO3_DIR" || { echo -e "${RED}Failed to enter $REPO3_DIR directory.${NC}"; exit 1; }
-        if git pull; then
-            echo -e "${GREEN}Updated $REPO3_DIR successfully.${NC}"
-        else
-            echo -e "${RED}Failed to update $REPO3_DIR${NC}"
-            exit 1
-        fi
-        cd ..
-    fi
-
-    # Clone or update repository 4
-    if [ ! -d "$REPO4_DIR" ]; then
-        echo "Cloning $REPO4_URL into $REPO4_DIR"
-        if git clone "$REPO4_URL" "$REPO4_DIR"; then
-            echo -e "${GREEN}Cloned $REPO4_URL successfully.${NC}"
-        else
-            echo -e "${RED}Failed to clone $REPO4_URL${NC}"
-            exit 1
-        fi
-    else
-        echo "Updating $REPO4_DIR"
-        cd "$REPO4_DIR" || { echo -e "${RED}Failed to enter $REPO4_DIR directory.${NC}"; exit 1; }
-        if git pull; then
-            echo -e "${GREEN}Updated $REPO4_DIR successfully.${NC}"
-        else
-            echo -e "${RED}Failed to update $REPO4_DIR${NC}"
-            exit 1
-        fi
-        cd ..
-    fi
+    clone_or_update_repo "$REPO1_URL" "InfoCompanies-API"
+    clone_or_update_repo "$REPO2_URL" "InfoCompanies-Front"
+    clone_or_update_repo "$REPO3_URL" "InfoCompanies-Scraping-API"
+    clone_or_update_repo "$REPO4_URL" "InfoCompanies-Data-Model"
 
     echo -e "${GREEN}Repositories are up-to-date!${NC}"
 }
@@ -209,47 +154,59 @@ create_env() {
     done
 }
 
+# Function to initialize the environment
+init() {
+    echo "Initializing the environment..."
+    install
+    create_env
+    insert_db "template"
+    echo -e "${GREEN}Environment initialized successfully!${NC}"
+}
+
 # Check the arguments passed to the script
 case "$1" in
-    start)
-        if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
-            start "$2"
-        else
-            echo -e "${YELLOW}Usage: ./devcli.sh start {dev|prod}${NC}"
-            exit 1
-        fi
-        ;;
-    stop)
-        if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
-            stop "$2"
-        else
-            echo -e "${YELLOW}Usage: ./devcli.sh stop {dev|prod}${NC}"
-            exit 1
-        fi
-        ;;
-    insert_db)
-        if [ "$2" = "template" ]; then
-            insert_db "template"
-        else
-            insert_db
-        fi
-        ;;
-    install)
-        install
-        ;;
-    remove_volumes)
-        if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
-            remove_volumes "$2"
-        else
-            echo -e "${YELLOW}Usage: ./script.sh remove_volumes {dev|prod}${NC}"
-            exit 1
-        fi
-        ;;
-    create_env)
-        create_env
-        ;;
-    *)
-        echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env} {dev|prod}${NC}"
+start)
+    if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
+        start "$2"
+    else
+        echo -e "${YELLOW}Usage: ./devcli.sh start {dev|prod}${NC}"
         exit 1
-        ;;
+    fi
+    ;;
+stop)
+    if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
+        stop "$2"
+    else
+        echo -e "${YELLOW}Usage: ./devcli.sh stop {dev|prod}${NC}"
+        exit 1
+    fi
+    ;;
+insert_db)
+    if [ "$2" = "template" ]; then
+        insert_db "template"
+    else
+        insert_db
+    fi
+    ;;
+install)
+    install
+    ;;
+remove_volumes)
+    if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
+        remove_volumes "$2"
+    else
+        echo -e "${YELLOW}Usage: ./devcli.sh remove_volumes {dev|prod}${NC}"
+        exit 1
+    fi
+    ;;
+create_env)
+    create_env
+    ;;
+init)
+    init
+    ;;
+*)
+    echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env|init} {dev|prod}${NC}"
+    exit 1
+    ;;
 esac
