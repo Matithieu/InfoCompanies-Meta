@@ -92,6 +92,7 @@ services:
       OAUTH2_PROXY_CLIENT_SECRET: 'OMMsZCibSNfZemo6iwjg6mOziicG1FJf'
       OAUTH2_PROXY_OIDC_ISSUER_URL: 'http://keycloak:8180/realms/infoCompanies'
       OAUTH2_PROXY_EMAIL_DOMAINS: '*'
+      OAUTH2_PROXY_BACKEND_LOGOUT_URL: 'http://keycloak:8180/realms/infoCompanies/protocol/openid-connect/logout?post_logout_redirect_uri=http%3A%2F%2Flocalhost&id_token_hint={id_token}'
       OAUTH2_PROXY_COOKIE_SECRET: 'iCg-xr79FO66_EiOhZF3pOsEGnNfARiH50MX0AWaBU8='
       OAUTH2_PROXY_REVERSE_PROXY: 'true'
       OAUTH2_PROXY_COOKIE_SECURE: 'false'
@@ -110,6 +111,7 @@ services:
       - --whitelist-domain=localhost
       - --whitelist-domain=localhost:3000
       - --whitelist-domain=localhost:80
+      - --whitelist-domain=keycloak:8180
       - --insecure-oidc-allow-unverified-email=true
       - --prefer-email-to-user=true
       - --set-xauthrequest=true
