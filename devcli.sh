@@ -163,6 +163,40 @@ init() {
     echo -e "${GREEN}Environment initialized successfully!${NC}"
 }
 
+# Function to reload the backend API container
+reload_backend() {
+    if [ -z "$1" ]; then
+        echo -e "${RED}No environment specified. Please use 'dev' or 'prod'.${NC}"
+        exit 1
+    fi
+
+    ENV=$1
+
+    echo "Building the Docker image for backend..."
+    if docker-compose -f "docker-compose-$ENV.yml" stop backend; then
+        echo -e "${GREEN}Docker image built successfully.${NC}"
+    else
+        echo -e "${RED}Failed to build Docker image.${NC}"
+        exit 1
+    fi
+
+    echo "Stopping the backend container..."
+    if docker-compose -f "docker-compose-$ENV.yml" build backend; then
+        echo -e "${GREEN}Container stopped successfully.${NC}"
+    else
+        echo -e "${RED}Failed to stop container.${NC}"
+        exit 1
+    fi
+
+    echo "Starting a new backend container with the updated image..."
+    if docker-compose -f "docker-compose-$ENV.yml" up -d backend; then
+        echo -e "${GREEN}Container started successfully!${NC}"
+    else
+        echo -e "${RED}Failed to start container.${NC}"
+        exit 1
+    fi
+}
+
 # Check the arguments passed to the script
 case "$1" in
 start)
@@ -205,8 +239,16 @@ create_env)
 init)
     init
     ;;
+reload_backend)
+    if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
+        reload_backend "$2"
+    else
+        echo -e "${YELLOW}Usage: ./devcli.sh reload_backend {dev|prod}${NC}"
+        exit 1
+    fi
+    ;;
 *)
-    echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env|init} {dev|prod}${NC}"
+    echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env|init|reload_backend} {dev|prod}${NC}"
     exit 1
     ;;
 esac
