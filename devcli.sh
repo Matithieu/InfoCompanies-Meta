@@ -1,5 +1,6 @@
 #!/bin/bash
 #!/bin/zsh
+# On bash run it with ./devcli.sh
 
 # Color codes for styling
 RED='\033[0;31m'
@@ -48,12 +49,41 @@ stop() {
     fi
 }
 
+# Function to install pip if not installed
+install_pip() {
+    if ! command -v pip &> /dev/null; then
+        echo "pip could not be found. Installing pip..."
+        if sudo -E apt-get update && sudo -E apt-get install -y python3-pip; then
+            echo -e "${GREEN}pip installed successfully.${NC}"
+        else
+            echo -e "${RED}Failed to install pip.${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${GREEN}pip is already installed.${NC}"
+    fi
+}
+
+# Function to install dependencies from requirements.txt
+install_requirements() {
+    echo "Installing requirements..."
+    if sudo -E pip install -r InfoCompanies-Data-Model/requirements.txt; then
+        echo -e "${GREEN}Requirements installed successfully.${NC}"
+    else
+        echo -e "${RED}Failed to install requirements.${NC}"
+        exit 1
+    fi
+}
+
 # Function to insert data into the database
 insert_db() {
     CSV_FILE="final.csv"
     if [ "$1" = "template" ]; then
         CSV_FILE="template.csv"
     fi
+
+    install_pip
+    install_requirements
 
     echo "Insertion de données dans la base de données..."
     if sudo -E sh ./InfoCompanies-Data-Model/db.sh "$CSV_FILE"; then
@@ -67,6 +97,7 @@ insert_db() {
 # Function to validate a repository URL
 validate_repo() {
     REPO_URL="$1"
+    
     if git ls-remote "$REPO_URL" &>/dev/null; then
         echo -e "${GREEN}Repository $REPO_URL is valid.${NC}"
         return 0
