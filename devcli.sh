@@ -51,7 +51,7 @@ stop() {
 
 # Function to install pip if not installed
 install_pip() {
-    if ! command -v pip &> /dev/null; then
+    if ! command -v pip &>/dev/null; then
         echo "pip could not be found. Installing pip..."
         if sudo -E apt-get update && sudo -E apt-get install -y python3-pip; then
             echo -e "${GREEN}pip installed successfully.${NC}"
@@ -97,7 +97,7 @@ insert_db() {
 # Function to validate a repository URL
 validate_repo() {
     REPO_URL="$1"
-    
+
     if git ls-remote "$REPO_URL" &>/dev/null; then
         echo -e "${GREEN}Repository $REPO_URL is valid.${NC}"
         return 0
@@ -157,10 +157,10 @@ install() {
     REPO4_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO4}"
 
     # Validate repositories
-    validate_repo "$REPO1_URL" || exit 1
-    validate_repo "$REPO2_URL" || exit 1
-    validate_repo "$REPO3_URL" || exit 1
-    validate_repo "$REPO4_URL" || exit 1
+    validate_repo "${REPO1}" || exit 1
+    validate_repo "${REPO2}" || exit 1
+    validate_repo "${REPO3}" || exit 1
+    validate_repo "${REPO4}" || exit 1
 
     clone_or_update_repo "$REPO1_URL" "InfoCompanies-API"
     clone_or_update_repo "$REPO2_URL" "InfoCompanies-Front"
