@@ -194,33 +194,34 @@ init() {
     echo -e "${GREEN}Environment initialized successfully!${NC}"
 }
 
-# Function to reload the backend API container
-reload_backend() {
-    if [ -z "$1" ]; then
-        echo -e "${RED}No environment specified. Please use 'dev' or 'prod'.${NC}"
+# Function to reload a specific service container
+reload() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo -e "${RED}No environment or service specified. Please use 'dev' or 'prod' and specify a service name.${NC}"
         exit 1
     fi
 
     ENV=$1
+    SERVICE=$2
 
-    echo "Building the Docker image for backend..."
-    if docker-compose -f "docker-compose-$ENV.yml" stop backend; then
+    echo "Building the Docker image for $SERVICE..."
+    if docker-compose -f "docker-compose-$ENV.yml" stop "$SERVICE"; then
         echo -e "${GREEN}Docker image built successfully.${NC}"
     else
         echo -e "${RED}Failed to build Docker image.${NC}"
         exit 1
     fi
 
-    echo "Stopping the backend container..."
-    if docker-compose -f "docker-compose-$ENV.yml" build backend; then
+    echo "Stopping the $SERVICE container..."
+    if docker-compose -f "docker-compose-$ENV.yml" build "$SERVICE"; then
         echo -e "${GREEN}Container stopped successfully.${NC}"
     else
         echo -e "${RED}Failed to stop container.${NC}"
         exit 1
     fi
 
-    echo "Starting a new backend container with the updated image..."
-    if docker-compose -f "docker-compose-$ENV.yml" up -d backend; then
+    echo "Starting a new $SERVICE container with the updated image..."
+    if docker-compose -f "docker-compose-$ENV.yml" up -d "$SERVICE"; then
         echo -e "${GREEN}Container started successfully!${NC}"
     else
         echo -e "${RED}Failed to start container.${NC}"
@@ -270,16 +271,21 @@ create_env)
 init)
     init
     ;;
-reload_backend)
+reload)
     if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then
-        reload_backend "$2"
+        if [ -n "$3" ]; then
+            reload "$2" "$3"
+        else
+            echo -e "${YELLOW}Usage: ./devcli.sh reload {dev|prod} {service_name}${NC}"
+            exit 1
+        fi
     else
-        echo -e "${YELLOW}Usage: ./devcli.sh reload_backend {dev|prod}${NC}"
+        echo -e "${YELLOW}Usage: ./devcli.sh reload {dev|prod} {service_name}${NC}"
         exit 1
     fi
     ;;
 *)
-    echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env|init|reload_backend} {dev|prod}${NC}"
+    echo -e "${YELLOW}Usage: ./devcli.sh {start|stop|insert_db|install|remove_volumes|create_env|init|reload} {dev|prod} {service_name}${NC}"
     exit 1
     ;;
 esac
