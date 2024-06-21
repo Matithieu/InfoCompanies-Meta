@@ -109,7 +109,11 @@ services:
       OAUTH2_PROXY_PASS_AUTHORIZATION_HEADER: 'true'
       OAUTH2_PROXY_CODE_CHALLENGE_METHOD: 'S256'
       OAUTH2_PROXY_LOG_LEVEL: debug
-      OAUTH2_PROXY_LOG_FORMAT: json
+      OAUTH2_PROXY_AUTH_LOGGING_FORMAT: '{{.Client}} - {{.Username}} [{{.Timestamp}}] [{{.Status}}] {{.Message}}'
+      OAUTH2_PROXY_REQUEST_LOGGING_FORMAT: '{{.Client}} - {{.Username}} [{{.Timestamp}}] {{.Host}} {{.RequestMethod}} {{.Upstream}} {{.RequestURI}} {{.Protocol}} {{.UserAgent}} {{.StatusCode}} {{.ResponseSize}} {{.RequestDuration}}'
+      OAUTH2_PROXY_STANDARD_LOGGING_FORMAT: '[{{.Timestamp}}] [{{.File}}] {{.Message}}'
+      # List of ip of stripe:
+      OAUTH2_PROXY_WHITELIST_DOMAIN: 'localhost,localhost:3000,localhost:80,keycloak:8180,3.18.12.63,3.130.192.231,13.235.14.237,13.235.122.149,18.211.135.69,35.154.171.200,52.15.183.38,54.88.130.119,54.88.130.237,54.187.174.169,54.187.205.235,54.187.216.72'
     command:
       - --whitelist-domain=localhost
       - --whitelist-domain=localhost:3000
@@ -120,6 +124,7 @@ services:
       - --set-xauthrequest=true
       - --skip-provider-button=true
       - --insecure-oidc-skip-issuer-verification=true
+      - --skip-auth-route=/api/v1/stripe/webhook
     depends_on:
       keycloak:
         condition: service_healthy
