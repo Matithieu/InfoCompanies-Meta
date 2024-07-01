@@ -157,10 +157,10 @@ install() {
     REPO4_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO4}"
 
     # Validate repositories
-    validate_repo "${REPO1}" || exit 1
-    validate_repo "${REPO2}" || exit 1
-    validate_repo "${REPO3}" || exit 1
-    validate_repo "${REPO4}" || exit 1
+    #validate_repo "${REPO1}" || exit 1
+    #validate_repo "${REPO2}" || exit 1
+    #validate_repo "${REPO3}" || exit 1
+    #validate_repo "${REPO4}" || exit 1
 
     clone_or_update_repo "$REPO1_URL" "InfoCompanies-API"
     clone_or_update_repo "$REPO2_URL" "InfoCompanies-Front"
