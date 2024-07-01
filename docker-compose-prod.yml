@@ -52,8 +52,8 @@ services:
     ports:
       - '8180:8180'
     volumes:
-      - ./keycloak:/opt/keycloak/data/import
-      - ./keycloak/theme:/opt/keycloak/providers
+      - ./config/keycloak:/opt/keycloak/data/import
+      - ./config/keycloak/theme:/opt/keycloak/providers
     command: ['start-dev', '--import-realm']
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/localhost/8180'
