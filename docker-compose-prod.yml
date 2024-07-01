@@ -46,11 +46,15 @@ services:
       PROXY_ADDRESS_FORWARDING: true
       KC_HOSTNAME_STRICT: 'false'
       KC_PROXY_HEADERS: 'xforwarded'
+      OAUTH2_PROXY_CLIENT_SECRET: ${OAUTH2_PROXY_CLIENT_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     ports:
       - '8180:8180'
     volumes:
       - ./keycloak:/opt/keycloak/data/import
-    command: ['start-dev', '--import-realm', '--health-enabled=true']
+      - ./keycloak/theme:/opt/keycloak/providers
+    command: ['start-dev', '--import-realm']
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/localhost/8180'
       start_interval: 10s
@@ -94,7 +98,7 @@ services:
       OAUTH2_PROXY_CLIENT_ID: 'spring-ba-infocompanies'
       OAUTH2_PROXY_REDIRECT_URL: 'http://localhost/oauth2/callback'
       # Find the client secret in realm-export.json
-      OAUTH2_PROXY_CLIENT_SECRET: 'OMMsZCibSNfZemo6iwjg6mOziicG1FJf'
+      OAUTH2_PROXY_CLIENT_SECRET: ${OAUTH2_PROXY_CLIENT_SECRET}
       OAUTH2_PROXY_OIDC_ISSUER_URL: 'http://keycloak:8180/auth/realms/infoCompanies'
       OAUTH2_PROXY_EMAIL_DOMAINS: '*'
       OAUTH2_PROXY_BACKEND_LOGOUT_URL: 'http://keycloak:8180/auth/realms/infoCompanies/protocol/openid-connect/logout?post_logout_redirect_uri=http%3A%2F%2Flocalhost&id_token_hint={id_token}'

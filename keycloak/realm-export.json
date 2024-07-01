@@ -727,7 +727,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "OMMsZCibSNfZemo6iwjg6mOziicG1FJf",
+      "secret": "${OAUTH2_PROXY_CLIENT_SECRET}",
       "redirectUris": ["http://localhost/oauth2/callback"],
       "webOrigins": ["http://localhost:5173/*", "http://localhost/*"],
       "notBefore": 0,
@@ -1487,12 +1487,39 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {},
+  "loginTheme": "keywind",
+  "accountTheme": "keywind",
+  "adminTheme": "",
+  "emailTheme": "keywind",
   "eventsEnabled": false,
   "eventsListeners": ["jboss-logging"],
   "enabledEventTypes": [],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
-  "identityProviders": [],
+  "identityProviders": [
+    {
+      "alias": "google",
+      "internalId": "80c26222-a444-4f55-9b7f-aad104ae1517",
+      "providerId": "google",
+      "enabled": true,
+      "updateProfileFirstLoginMode": "on",
+      "trustEmail": true,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "config": {
+        "offlineAccess": "false",
+        "hideOnLoginPage": "false",
+        "clientId": "${GOOGLE_CLIENT_ID}",
+        "acceptsPromptNoneForwardFromClient": "false",
+        "disableUserInfo": "false",
+        "filteredByClaim": "false",
+        "syncMode": "IMPORT",
+        "clientSecret": "${GOOGLE_CLIENT_SECRET}"
+      }
+    }
+  ],
   "identityProviderMappers": [],
   "components": {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
@@ -1552,13 +1579,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "saml-role-list-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-address-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper",
             "saml-user-property-mapper",
-            "saml-user-attribute-mapper",
             "oidc-full-name-mapper",
-            "oidc-sha256-pairwise-sub-mapper"
+            "saml-user-attribute-mapper",
+            "oidc-address-mapper",
+            "oidc-usermodel-property-mapper"
           ]
         }
       },
@@ -1570,13 +1597,13 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-full-name-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-property-mapper",
             "saml-role-list-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-address-mapper",
+            "oidc-usermodel-property-mapper",
             "saml-user-property-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-full-name-mapper",
             "oidc-usermodel-attribute-mapper"
           ]
         }
