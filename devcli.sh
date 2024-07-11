@@ -151,10 +151,10 @@ clone_or_update_repo() {
 install() {
     echo "Fetching repositories from GitHub..."
 
-    REPO1_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO1}"
-    REPO2_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO2}"
-    REPO3_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO3}"
-    REPO4_URL="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@${REPO4}"
+    REPO1_URL="${REPO1}"
+    REPO2_URL="${REPO2}"
+    REPO3_URL="${REPO3}"
+    REPO4_URL="${REPO4}"
 
     # Validate repositories
     #validate_repo "${REPO1}" || exit 1
