@@ -8,12 +8,17 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Load environment variables from .env file
+#!/bin/bash
+
+# Load .env
 if [ -f .env ]; then
-    export "$(grep -v '^#' .env | xargs)"
-else
-    echo -e "${RED}.env file not found. Please create one with the required variables.${NC}"
-    exit 1
+    set -a
+    while IFS='=' read -r key value; do
+        if [[ ! $key =~ ^\ *# ]] && [[ -n $key ]]; then
+            export "$key=$value"
+        fi
+    done <.env
+    set +a
 fi
 
 # Function to start docker containers
