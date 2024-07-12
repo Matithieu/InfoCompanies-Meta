@@ -30,7 +30,7 @@ start() {
 
     echo "Starting docker containers..."
     if [ "$1" = "dev" ] || [ "$1" = "prod" ]; then
-        if docker-compose -f "docker-compose-$1.yml" up --build; then
+        if docker compose -f "docker-compose-$1.yml" up --build; then
             echo -e "${GREEN}Containers are up!${NC}"
         else
             echo -e "${RED}Failed to start docker containers.${NC}"
@@ -46,7 +46,7 @@ stop() {
     fi
 
     echo "Stopping docker containers..."
-    if docker-compose -f "docker-compose-$1.yml" down; then
+    if docker compose -f "docker-compose-$1.yml" down; then
         echo -e "${GREEN}Containers are down!${NC}"
     else
         echo -e "${RED}Failed to stop docker containers.${NC}"
@@ -115,7 +115,7 @@ validate_repo() {
 # Function to remove volumes
 remove_volumes() {
     echo "Removing volumes for $1 environment..."
-    if docker-compose -f "docker-compose-$1.yml" down -v; then
+    if docker compose -f "docker-compose-$1.yml" down -v; then
         echo -e "${GREEN}Volumes removed for $1 environment!${NC}"
     else
         echo -e "${RED}Failed to remove volumes for $1 environment.${NC}"
@@ -210,7 +210,7 @@ reload() {
     SERVICE=$2
 
     echo "Building the Docker image for $SERVICE..."
-    if docker-compose -f "docker-compose-$ENV.yml" stop "$SERVICE"; then
+    if docker compose -f "docker-compose-$ENV.yml" stop "$SERVICE"; then
         echo -e "${GREEN}Docker image built successfully.${NC}"
     else
         echo -e "${RED}Failed to build Docker image.${NC}"
@@ -218,7 +218,7 @@ reload() {
     fi
 
     echo "Stopping the $SERVICE container..."
-    if docker-compose -f "docker-compose-$ENV.yml" build "$SERVICE"; then
+    if docker compose -f "docker-compose-$ENV.yml" build "$SERVICE"; then
         echo -e "${GREEN}Container stopped successfully.${NC}"
     else
         echo -e "${RED}Failed to stop container.${NC}"
@@ -226,7 +226,7 @@ reload() {
     fi
 
     echo "Starting a new $SERVICE container with the updated image..."
-    if docker-compose -f "docker-compose-$ENV.yml" up -d "$SERVICE"; then
+    if docker compose -f "docker-compose-$ENV.yml" up -d "$SERVICE"; then
         echo -e "${GREEN}Container started successfully!${NC}"
     else
         echo -e "${RED}Failed to start container.${NC}"
