@@ -8,8 +8,6 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-#!/bin/bash
-
 # Load .env
 if [ -f .env ]; then
     set -a
@@ -20,6 +18,60 @@ if [ -f .env ]; then
     done <.env
     set +a
 fi
+# Function to generate SSL/TLS certificates and convert to JKS
+generate_certificates() {
+    # Variables
+    KEYSTORE_PASSWORD="changeit"
+    ALIAS="myalias"
+    DAYS_VALID=365
+    CONFIG_FILE="./config/certs/server.cnf"
+    OUTPUT_DIR="./config/oui/certs"
+    GREEN='\033[0;32m'
+    NC='\033[0m' # No Color
+
+    # Crée le répertoire de sortie s'il n'existe pas
+    mkdir -p $OUTPUT_DIR
+
+    # Création du fichier de configuration OpenSSL
+    cat >$CONFIG_FILE <<EOL
+[ req ]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+
+[ req_distinguished_name ]
+C = FR
+ST = State
+L = City
+O = Organization
+OU = OrganizationalUnit
+CN = keycloak
+
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = keycloak
+DNS.2 = keycloak.yourdomain.com
+EOL
+
+    # Private Key And CSR
+    openssl req -newkey rsa:2048 -nodes -keyout $OUTPUT_DIR/server.key -out $OUTPUT_DIR/server.csr -config $CONFIG_FILE
+
+    # CSR -> CRT
+    openssl x509 -req -days $DAYS_VALID -in $OUTPUT_DIR/server.csr -signkey $OUTPUT_DIR/server.key -out $OUTPUT_DIR/server.crt -extensions v3_req -extfile $CONFIG_FILE
+
+    # Key -> PKCS12
+    openssl pkcs12 -export -in $OUTPUT_DIR/server.crt -inkey $OUTPUT_DIR/server.key -out $OUTPUT_DIR/server.p12 -name $ALIAS -passout pass:$KEYSTORE_PASSWORD
+
+    # PKCS12 -> JKS
+    keytool -importkeystore -deststorepass $KEYSTORE_PASSWORD -destkeypass $KEYSTORE_PASSWORD -destkeystore $OUTPUT_DIR/keystore.jks -srckeystore $OUTPUT_DIR/server.p12 -srcstoretype PKCS12 -srcstorepass $KEYSTORE_PASSWORD -alias $ALIAS
+
+    # Combine the CRT and KEY into a PEM file
+    cat $OUTPUT_DIR/server.crt $OUTPUT_DIR/server.key >$OUTPUT_DIR/server.pem
+
+    echo -e "${GREEN}SSL/TLS certificates generated successfully!${NC}"
+}
 
 # Function to start docker containers
 start() {
@@ -161,12 +213,6 @@ install() {
     REPO3_URL="${REPO3}"
     REPO4_URL="${REPO4}"
 
-    # Validate repositories
-    #validate_repo "${REPO1}" || exit 1
-    #validate_repo "${REPO2}" || exit 1
-    #validate_repo "${REPO3}" || exit 1
-    #validate_repo "${REPO4}" || exit 1
-
     clone_or_update_repo "$REPO1_URL" "InfoCompanies-API"
     clone_or_update_repo "$REPO2_URL" "InfoCompanies-Front"
     clone_or_update_repo "$REPO3_URL" "InfoCompanies-Scraping-API"
@@ -196,6 +242,7 @@ init() {
     install
     create_env
     insert_db "template"
+    generate_certificates
     echo -e "${GREEN}Environment initialized successfully!${NC}"
 }
 
@@ -275,6 +322,9 @@ create_env)
     ;;
 init)
     init
+    ;;
+generate_certificates)
+    generate_certificates
     ;;
 reload)
     if [ "$2" = "dev" ] || [ "$2" = "prod" ]; then

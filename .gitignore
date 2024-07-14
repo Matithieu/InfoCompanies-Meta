@@ -5,3 +5,4 @@ InfoCompanies-Scraping-API
 .env
 .idea
 node_modules/
+config/certs/*
