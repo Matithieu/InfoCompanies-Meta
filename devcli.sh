@@ -25,7 +25,7 @@ generate_certificates() {
     ALIAS="myalias"
     DAYS_VALID=365
     CONFIG_FILE="./config/certs/server.cnf"
-    OUTPUT_DIR="./config/oui/certs"
+    OUTPUT_DIR="./config/certs"
     GREEN='\033[0;32m'
     NC='\033[0m' # No Color
 
@@ -69,6 +69,9 @@ EOL
 
     # Combine the CRT and KEY into a PEM file
     cat $OUTPUT_DIR/server.crt $OUTPUT_DIR/server.key >$OUTPUT_DIR/server.pem
+
+    # Give the correct permissions to the files
+    chmod 644 $OUTPUT_DIR/server.crt $OUTPUT_DIR/server.key $OUTPUT_DIR/server.pem $OUTPUT_DIR/server.p12
 
     echo -e "${GREEN}SSL/TLS certificates generated successfully!${NC}"
 }
