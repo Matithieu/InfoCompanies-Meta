@@ -728,8 +728,16 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "${OAUTH2_PROXY_CLIENT_SECRET}",
-      "redirectUris": ["https://localhost:443/oauth2/callback"],
-      "webOrigins": ["http://localhost:5173/*", "http://localhost/*", "https://localhost/*"],
+      "redirectUris": [
+        "https://localhost:443/oauth2/callback",
+        "https://${HOSTNAME_PORT}/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:5173/*",
+        "http://localhost/*",
+        "https://localhost/*",
+        "https://${HOSTNAME_PORT}/*"
+      ],
       "notBefore": 0,
       "bearerOnly": false,
       "consentRequired": false,
@@ -742,7 +750,7 @@
       "protocol": "openid-connect",
       "attributes": {
         "client.secret.creation.time": "1714929232",
-        "post.logout.redirect.uris": "https://localhost/oauth2/sign_out##http://localhost/*##https://localhost",
+        "post.logout.redirect.uris": "https://localhost/oauth2/sign_out##http://localhost/*##https://localhost##https://${HOSTNAME_PORT}/oauth2/sign_out",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
