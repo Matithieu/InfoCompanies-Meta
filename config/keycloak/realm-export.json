@@ -750,7 +750,7 @@
       "protocol": "openid-connect",
       "attributes": {
         "client.secret.creation.time": "1714929232",
-        "post.logout.redirect.uris": "https://localhost/oauth2/sign_out##http://localhost/*##https://localhost##https://${HOSTNAME_PORT}/oauth2/sign_out",
+        "post.logout.redirect.uris": "https://localhost/oauth2/sign_out##http://localhost/*##https://localhost##https://${HOSTNAME_PORT}/oauth2/sign_out##https://${HOSTNAME_PORT}/*",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
