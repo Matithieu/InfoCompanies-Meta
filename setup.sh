@@ -4,6 +4,9 @@
 sudo systemctl disable apache2
 sudo systemctl stop apache2
 
+# Install Java for the KeyTool
+sudo apt install default-jre -y
+
 # Remove existing Docker packages
 for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do
     sudo apt-get remove -y $pkg
@@ -29,7 +32,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 
 # Create Docker group and add user
 sudo groupadd docker
-sudo usermod -aG docker $USER
+sudo usermod -aG docker "$USER"
 newgrp docker
 
 sudo apt-get update
