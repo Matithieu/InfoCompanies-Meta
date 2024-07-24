@@ -42,17 +42,18 @@ prompt = no
 [ req_distinguished_name ]
 C = FR
 ST = State
-L = City
+L = Paris
 O = Organization
 OU = OrganizationalUnit
-CN = keycloak
+CN = matithieu.com
 
 [ v3_req ]
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = keycloak
-DNS.2 = keycloak.yourdomain.com
+DNS.1 = matithieu.com
+DNS.2 = www.matithieu.com
+DNS.3 = keycloak
 EOL
 
     # Private Key And CSR
