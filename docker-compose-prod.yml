@@ -111,7 +111,7 @@ services:
     env_file:
       - ./InfoCompanies-Front/.env
     environment:
-      - VITE_PROXY_BASE_URL=${HOSTNAME}
+      - VITE_PROXY_BASE_URL=${FULL_DOMAIN}
       - STRIPE_PRICE_ID_FREE=${STRIPE_PRICE_ID_FREE}
       - STRIPE_PRICE_ID_BASIC=${STRIPE_PRICE_ID_BASIC}
       - STRIPE_PRICE_ID_PREMIUM=${STRIPE_PRICE_ID_PREMIUM}
