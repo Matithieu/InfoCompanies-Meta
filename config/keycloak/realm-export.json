@@ -2345,7 +2345,7 @@
   },
   "users": [
     {
-      "username": "admin",
+      "username": "local-admin@mail.com",
       "enabled": true,
       "emailVerified": true,
       "firstName": "Rootus",
@@ -2357,12 +2357,13 @@
           "value": "password"
         }
       ],
-      "realmRoles": ["default-roles-infocompanies"],
+      "realmRoles": ["default-roles-infocompanies", "verified"],
       "clientRoles": {
         "realm-management": ["realm-admin"]
       },
       "attributes": {
-        "isVerified": "true"
+        "isVerified": "true",
+        "tier": "TIER1"
       }
     }
   ]
