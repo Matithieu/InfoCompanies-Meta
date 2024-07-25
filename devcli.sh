@@ -43,7 +43,7 @@ prompt = no
 C = FR
 ST = State
 L = Paris
-O = Organization
+O = matithieu
 OU = OrganizationalUnit
 CN = matithieu.com
 
