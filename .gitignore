@@ -6,3 +6,4 @@ InfoCompanies-Scraping-API
 .idea
 node_modules/
 config/certs/*
+certbot

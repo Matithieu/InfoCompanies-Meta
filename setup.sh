@@ -4,6 +4,10 @@
 sudo systemctl disable apache2
 sudo systemctl stop apache2
 
+# Disable and stop Nginx
+sudo systemctl disable nginx
+sudo systemctl stop nginx
+
 # Install Java for the KeyTool
 sudo apt install default-jre -y
 

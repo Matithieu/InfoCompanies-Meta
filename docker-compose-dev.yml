@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 services:
   postgres:
     image: postgres
@@ -20,6 +20,8 @@ services:
 
   pgadmin4:
     image: dpage/pgadmin4:latest
+    ports:
+      - '5050:5050'
     environment:
       PGADMIN_DEFAULT_EMAIL: 'admin@example.com'
       PGADMIN_DEFAULT_PASSWORD: 'admin'
@@ -43,30 +45,32 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.2
     environment:
-      KEYCLOAK_ADMIN: admin
+       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
-      KC_HTTP_PORT: 8183
+      KC_HTTP_ENABLED: true
+      KC_HTTP_PORT: 8080
       KC_HTTPS_PORT: 8180
-      KC_HEALTH_ENABLED: 'true'
+      KC_HTTPS_ENABLED: true
       KC_HTTP_RELATIVE_PATH: /auth
       KC_HOSTNAME: ${HOSTNAME}
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
       KC_PROXY_HEADERS: 'xforwarded'
       PROXY_ADDRESS_FORWARDING: true
       OAUTH2_PROXY_CLIENT_SECRET: ${OAUTH2_PROXY_CLIENT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       HOSTNAME_PORT: ${HOSTNAME_PORT}
-      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt
-      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key
-      KC_TRUSTSTORE_PATHS: /opt/truststore/server.p12
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/cert.pem
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/privkey.pem
+      KC_HOSTNAME_DEBUG: true
     ports:
       - '8180:8180'
     volumes:
       - ./config/keycloak:/opt/keycloak/data/import
       - ./config/keycloak/theme:/opt/keycloak/providers
-      - ./config/certs/server.crt:/opt/keycloak/conf/server.crt
-      - ./config/certs/server.key:/opt/keycloak/conf/server.key
-      - ./config/certs/server.p12:/opt/truststore/server.p12
+      - ./certbot/conf/live/matithieu.com/cert.pem:/opt/keycloak/conf/cert.pem
+      - ./certbot/conf/live/matithieu.com/privkey.pem:/opt/keycloak/conf/privkey.pem
     command: ['start-dev', '--import-realm']
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/localhost/8180'
@@ -82,27 +86,17 @@ services:
 
   backend:
     build:
-      context: .
       dockerfile: InfoCompanies-API/Dockerfile
-      args:
-        - CONFIG_PATH=./config/certs
     env_file:
       - ./InfoCompanies-API/.env
     environment:
-      - SERVER_SSL_CERTIFICATE=/app/config/certs/server.crt
-      - SERVER_SSL_CERTIFICATE_PRIVATE_KEY=/app/config/certs/server.key
-      - SERVER_SSL_KEY_STORE=/app/config/certs/server.p12
-      - SERVER_SSL_KEY_STORE_PASSWORD=changeit
-      - SERVER_SSL_KEY_STORE_TYPE=PKCS12
-      - SERVER_SSL_KEY_ALIAS=myalias
+      - SERVER_URL=http://keycloak:8080/auth
       - HOSTNAME=${HOSTNAME}
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - STRIPE_PRICE_ID_FREE=${STRIPE_PRICE_ID_FREE}
       - STRIPE_PRICE_ID_BASIC=${STRIPE_PRICE_ID_BASIC}
       - STRIPE_PRICE_ID_PREMIUM=${STRIPE_PRICE_ID_PREMIUM}
-    volumes:
-      - ./config/certs:/app/config/certs
     depends_on:
       postgres:
         condition: service_healthy
@@ -112,6 +106,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
+      - '80:80'
       - '443:443'
     env_file:
       - ./InfoCompanies-Front/.env
@@ -121,7 +116,9 @@ services:
       - STRIPE_PRICE_ID_PREMIUM=${STRIPE_PRICE_ID_PREMIUM}
     volumes:
       - ./config/nginx/nginxDev.conf:/etc/nginx/conf.d/default.conf
-      - ./config/certs:/etc/nginx/certs
+      - certs:/etc/nginx/certs
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - ./certbot/www/:/var/www/certbot/:ro
     depends_on:
       - backend
       - oauth2-proxy
@@ -149,7 +146,7 @@ services:
       OAUTH2_PROXY_COOKIE_SECURE: 'true'
       OAUTH2_PROXY_COOKIE_REFRESH: '59m'
       OAUTH2_PROXY_COOKIE_EXPIRE: '168h'
-      OAUTH2_PROXY_COOKIE_DOMAIN: 'localhost'
+      OAUTH2_PROXY_COOKIE_DOMAIN: ${HOSTNAME}
       OAUTH2_PROXY_HTTP_ADDRESS: http://0.0.0.0:4180
       OAUTH2_PROXY_UPSTREAMS: 'http://backend:8080/'
       OAUTH2_PROXY_SESSION_STORE_TYPE: 'redis'
@@ -186,3 +183,4 @@ services:
 volumes:
   postgres_data:
   pgadmin_data:
+  certs:
