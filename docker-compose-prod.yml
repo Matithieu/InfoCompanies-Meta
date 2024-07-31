@@ -92,6 +92,7 @@ services:
     environment:
       - SERVER_URL=http://keycloak:8080/auth
       - HOSTNAME=${HOSTNAME}
+      - FULL_DOMAIN=${FULL_DOMAIN}
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - STRIPE_PRICE_ID_FREE=${STRIPE_PRICE_ID_FREE}
