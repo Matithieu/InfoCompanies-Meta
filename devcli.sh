@@ -147,7 +147,7 @@ insert_db() {
     install_requirements
 
     echo "Insertion de données dans la base de données..."
-    if sudo -E sh ./InfoCompanies-Data-Model/db.sh "$CSV_FILE"; then
+    if sudo -E bash ./InfoCompanies-Data-Model/db.sh "$CSV_FILE"; then
         echo -e "${GREEN}Data inserted successfully.${NC}"
     else
         echo -e "${RED}Failed to insert data.${NC}"
