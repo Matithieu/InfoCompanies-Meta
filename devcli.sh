@@ -227,7 +227,7 @@ install() {
 
 # Function to create .env files from .template.env files
 create_env() {
-    for dir in InfoCompanies-API InfoCompanies-Scraping-API; do
+    for dir in InfoCompanies-API InfoCompanies-Scraping-API InfoCompanies-Front; do
         TEMPLATE_FILE="$dir/template.env"
         ENV_FILE="$dir/.env"
         if [ -f "$TEMPLATE_FILE" ]; then
