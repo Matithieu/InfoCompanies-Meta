@@ -93,6 +93,8 @@ services:
       - SERVER_URL=http://keycloak:8080/auth
       - HOSTNAME=${HOSTNAME}
       - FULL_DOMAIN=${FULL_DOMAIN}
+      - REDIRECT_URI=https://${HOSTNAME_PORT}/oauth2/callback
+      - REGISTER_CLIENT_ID=spring-ba-infocompanies
       - STRIPE_API_KEY=${STRIPE_API_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - STRIPE_PRICE_ID_FREE=${STRIPE_PRICE_ID_FREE}
@@ -187,6 +189,10 @@ services:
       - --skip-provider-button=true
       - --insecure-oidc-skip-issuer-verification=true
       - --skip-auth-route=/api/v1/stripe/webhook
+      - --skip-auth-route=GET=/api/v1/company/landing-filter
+      - --skip-auth-route=GET=/api/v1/autocomplete/city
+      - --skip-auth-route=GET=/api/v1/autocomplete/industry-sector
+      - --skip-auth-route=GET=/api/v1/register
     depends_on:
       keycloak:
         condition: service_healthy
