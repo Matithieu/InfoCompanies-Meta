@@ -83,6 +83,10 @@ services:
     build: ./InfoCompanies-Scraping-API
     env_file:
       - ./InfoCompanies-Scraping-API/.env
+    environment:
+      - PROXY_URL=${PROXY_URL}
+      - PROXY_USER=${PROXY_USER}
+      - PROXY_KEY=${PROXY_KEY}
 
   backend:
     build:
