@@ -19,6 +19,7 @@ if [ -f .env ]; then
     set +a
 fi
 # Function to generate SSL/TLS certificates and convert to JKS
+# Might need to run this script with sudo
 generate_certificates() {
     # Variables
     KEYSTORE_PASSWORD="changeit"
