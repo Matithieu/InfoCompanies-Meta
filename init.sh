@@ -10,8 +10,14 @@ docker compose -f "docker-compose-setup.yml" run --rm certbot certonly --webroot
 sudo chmod -R 777 ./certbot/conf/live/
 sudo chmod -R 777 ./certbot/conf/archive/
 
+cp -r ./certbot/conf/archive/* ./certbot/conf/live/
+mv ./certbot/conf/archive/matithieu.com/cert1.pem ./certbot/conf/live/matithieu.com/cert.pem
+mv ./certbot/conf/archive/matithieu.com/chain1.pem ./certbot/conf/live/matithieu.com/chain.pem
+mv ./certbot/conf/archive/matithieu.com/fullchain1.pem ./certbot/conf/live/matithieu.com/fullchain.pem
+mv ./certbot/conf/archive/matithieu.com/privkey1.pem ./certbot/conf/live/matithieu.com/privkey.pem
+
 # Convertir les certificats en format PKCS12
-openssl pkcs12 -export -out server.p12 -inkey ./certbot/conf/live/matithieu.com/privkey.pem -in ./certbot/conf/live/matithieu.com/fullchain.pem -certfile ./certbot/conf/live/matithieu.com/chain.pem
+# openssl pkcs12 -export -out server.p12 -inkey ./certbot/conf/live/matithieu.com/privkey.pem -in ./certbot/conf/live/matithieu.com/fullchain.pem -certfile ./certbot/conf/live/matithieu.com/chain.pem
 
 # Arrêter Docker Compose
 docker compose -f "docker-compose-setup.yml" down
