@@ -179,12 +179,12 @@ services:
       OAUTH2_PROXY_STANDARD_LOGGING_FORMAT: '[{{.Timestamp}}] [{{.File}}] {{.Message}}'
       OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY: 'true'
       # List of ip of stripe:
-      OAUTH2_PROXY_WHITELIST_DOMAIN: 'localhost,localhost:3000,localhost:443,${HOSTNAME_PORT},keycloak:8180,3.18.12.63,3.130.192.231,13.235.14.237,13.235.122.149,18.211.135.69,35.154.171.200,52.15.183.38,54.88.130.119,54.88.130.237,54.187.174.169,54.187.205.235,54.187.216.72'
+      OAUTH2_PROXY_WHITELIST_DOMAIN: 'localhost,localhost:5173,localhost:443,${HOSTNAME_PORT},keycloak:8180,3.18.12.63,3.130.192.231,13.235.14.237,13.235.122.149,18.211.135.69,35.154.171.200,52.15.183.38,54.88.130.119,54.88.130.237,54.187.174.169,54.187.205.235,54.187.216.72'
     command:
       - --whitelist-domain=${HOSTNAME}
       - --whitelist-domain=${HOSTNAME_PORT}
       - --whitelist-domain=localhost
-      - --whitelist-domain=localhost:3000
+      - --whitelist-domain=localhost:5173
       - --whitelist-domain=localhost:443
       - --whitelist-domain=keycloak:8180
       - --insecure-oidc-allow-unverified-email=true
@@ -203,7 +203,32 @@ services:
       redis:
         condition: service_started
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - prometheus_data:/prometheus
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+    depends_on:
+      - prometheus
+
 volumes:
   postgres_data:
   pgadmin_data:
   certs:
+  grafana_data:
+  prometheus_data:
