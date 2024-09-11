@@ -63,6 +63,7 @@ services:
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/cert.pem
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/privkey.pem
       KC_HOSTNAME_DEBUG: true
+      KC_METRICS_ENABLED: true
     ports:
       - '8180:8180'
     volumes:
