@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:16.4
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./InfoCompanies-Data-Model:/csv
@@ -18,7 +18,7 @@ services:
       start_period: 80s
 
   pgadmin4:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:8.11
     ports:
       - '5050:5050'
     environment:
@@ -42,7 +42,7 @@ services:
         /entrypoint.sh
 
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0.2
+    image: quay.io/keycloak/keycloak:24.0.4
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
@@ -111,7 +111,7 @@ services:
         condition: service_healthy
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.26.2
     ports:
       - '80:80'
       - '443:443'
@@ -134,7 +134,7 @@ services:
       - '6379:6379'
 
   oauth2-proxy:
-    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
     ports:
       - '4180:4180'
     environment:
