@@ -42,7 +42,7 @@ services:
         /entrypoint.sh
 
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0.4
+    image: quay.io/keycloak/keycloak:25.0.6
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
@@ -51,9 +51,8 @@ services:
       KC_HTTPS_PORT: 8180
       KC_HTTPS_ENABLED: true
       KC_HTTP_RELATIVE_PATH: /auth
-      KC_HOSTNAME: ${HOSTNAME}
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HOSTNAME: ${FULL_DOMAIN}/auth
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
       KC_PROXY_HEADERS: 'xforwarded'
       PROXY_ADDRESS_FORWARDING: true
       OAUTH2_PROXY_CLIENT_SECRET: ${OAUTH2_PROXY_CLIENT_SECRET}
@@ -62,6 +61,7 @@ services:
       HOSTNAME_PORT: ${HOSTNAME_PORT}
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key
+      KC_LEGACY_OBSERVABILITY_INTERFACE: true # https://keycloak.discourse.group/t/setting-the-management-server-to-http-in-keycloak-25/26497/2
       KC_HOSTNAME_DEBUG: true
       KC_METRICS_ENABLED: true
     ports:
