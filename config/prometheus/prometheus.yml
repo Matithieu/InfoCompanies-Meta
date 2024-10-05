@@ -9,6 +9,12 @@ scrape_configs:
       - targets: ['backend:8080']
     scheme: http
 
+  - job_name: 'scraping-api'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['scraping:8081']
+    scheme: http
+
   - job_name: keycloak
     metrics_path: /auth/metrics
     static_configs:
