@@ -2414,7 +2414,30 @@
       },
       "attributes": {
         "isVerified": "true",
-        "tier": "TIER1",
+        "tier": "ENTERPRISE",
+        "hasCompletedOnboarding": "true"
+      }
+    },
+    {
+      "username": "admin@mail.com",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Mathieu",
+      "lastName": "Admin",
+      "email": "admin@mail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ],
+      "realmRoles": ["default-roles-infocompanies", "verified"],
+      "clientRoles": {
+        "realm-management": ["realm-admin"]
+      },
+      "attributes": {
+        "isVerified": "true",
+        "tier": "ENTERPRISE",
         "hasCompletedOnboarding": "true"
       }
     }
