@@ -1,6 +1,4 @@
-import fs from 'node:fs'
-import { test, expect } from '@playwright/test'
-import { chromium, ConsoleMessage, LaunchOptions } from '@playwright/test'
+import { test } from '@playwright/test'
 
 // Launch options.
 // const options: LaunchOptions = {

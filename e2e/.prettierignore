@@ -1,0 +1,6 @@
+# Ignore artifacts:
+reports
+build
+
+# Package
+package.json

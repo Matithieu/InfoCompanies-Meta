@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "nodeNext",
+    "moduleResolution": "nodeNext",
+    "noEmit": false,
+    "inlineSourceMap": true,
+    "outDir": "build"
+  },
+  "include": [
+    "typings", "tests"
+  ],
+}

@@ -11,7 +11,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
-  ignorePatterns: ['tests', '.eslintrc.cjs'],
+  ignorePatterns: ['.eslintrc.cjs'],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: './tsconfig.json',

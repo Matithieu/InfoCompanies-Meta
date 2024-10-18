@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.4.0",
     "@playwright/test": "^1.44.1",
     "@types/node": "^20.14.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
@@ -25,8 +24,7 @@
     "globals": "^15.3.0",
     "lint-staged": "^15.2.5",
     "prettier": "^3.3.0",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.11.0"
+    "typescript": "^5.4.5"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -34,5 +32,12 @@
         "typescript": "5"
       }
     }
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "typescript": "^5.5.4",
+    "type-fest": "^4.25.0",
+    "@playwright/test": "1.46.1",
+    "@types/node": "^22.5.0"
   }
 }
